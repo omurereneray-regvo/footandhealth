@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { HomeScreen } from './src/screens/HomeScreen';
-import { LoginScreen, OnboardingScreen, ResultScreen, ScannerScreen } from './src/screens/PlaceholderScreens';
+import { OnboardingScreen, ResultScreen, ScannerScreen, WelcomeScreen } from './src/screens/PlaceholderScreens';
 import { colors, safeTop } from './src/theme';
 
 export default function App() {
@@ -11,7 +11,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        {screen === 'login' && <LoginScreen onContinue={() => setScreen('onboarding')} />}
+        {screen === 'login' && <WelcomeScreen onContinue={() => setScreen('onboarding')} />}
         {screen === 'onboarding' && <OnboardingScreen onComplete={() => setScreen('home')} />}
         {screen === 'home' && <HomeScreen onScan={() => setScreen('scanner')} />}
         {screen === 'scanner' && <ScannerScreen onResult={() => setScreen('result')} />}
