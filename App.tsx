@@ -2,22 +2,27 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { HomeScreen } from './src/screens/HomeScreen';
-import { OnboardingScreen, ResultScreen, ScannerScreen, WelcomeScreen } from './src/screens/PlaceholderScreens';
+import { OnboardingScreen, ResultScreen, WelcomeScreen } from './src/screens/PlaceholderScreens';
+import { ProfileScreen } from './src/screens/ProfileScreen';
+import { ScannerScreen } from './src/screens/ScannerScreen';
 import { colors, safeTop } from './src/theme';
 
 export default function App() {
-  const [screen, setScreen] = useState<'login' | 'onboarding' | 'home' | 'scanner' | 'result'>('login');
-  const showTabs = screen === 'home';
+  const [screen, setScreen] = useState<'login' | 'onboarding' | 'home' | 'scanner' | 'result' | 'profile'>('login');
+  const [selected, setSelected] = useState<string[]>([]);
+  const [barcode, setBarcode] = useState('');
+  const showTabs = screen === 'home' || screen === 'profile';
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         {screen === 'login' && <WelcomeScreen onContinue={() => setScreen('onboarding')} />}
-        {screen === 'onboarding' && <OnboardingScreen onComplete={() => setScreen('home')} />}
-        {screen === 'home' && <HomeScreen onScan={() => setScreen('scanner')} />}
-        {screen === 'scanner' && <ScannerScreen onResult={() => setScreen('result')} />}
-        {screen === 'result' && <ResultScreen onClose={() => setScreen('home')} />}
+        {screen === 'onboarding' && <OnboardingScreen onComplete={(choices) => { setSelected(choices); setScreen('home'); }} />}
+        {screen === 'home' && <HomeScreen selected={selected} onProfile={() => setScreen('profile')} onScan={() => setScreen('scanner')} />}
+        {screen === 'profile' && <ProfileScreen selected={selected} onChange={setSelected} />}
+        {screen === 'scanner' && <ScannerScreen onClose={() => setScreen('home')} onResult={(code) => { setBarcode(code); setScreen('result'); }} />}
+        {screen === 'result' && <ResultScreen barcode={barcode} selected={selected} onProfile={() => setScreen('profile')} onClose={() => setScreen('home')} />}
       </View>
-      {showTabs && <View style={styles.tabs}><Tab label="Ana Sayfa" icon="⌂" active/><Tab label="Tara" icon="▥" onPress={() => setScreen('scanner')}/><Tab label="Profil" icon="◉"/></View>}
+      {showTabs && <View style={styles.tabs}><Tab label="Ana Sayfa" icon="⌂" active={screen === 'home'} onPress={() => setScreen('home')}/><Tab label="Tara" icon="▥" onPress={() => setScreen('scanner')}/><Tab label="Profil" icon="◉" active={screen === 'profile'} onPress={() => setScreen('profile')}/></View>}
       <StatusBar style="dark" />
     </View>
   );

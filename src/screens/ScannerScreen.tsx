@@ -1,0 +1,15 @@
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { AppButton } from '../components/ui';
+import { colors } from '../theme';
+
+export function ScannerScreen({ onResult, onClose }: { onResult: (code: string) => void; onClose: () => void }) {
+  const [permission, requestPermission] = useCameraPermissions();
+  const [scanned, setScanned] = useState(false);
+  if (!permission) return <View style={styles.page} />;
+  if (!permission.granted) return <View style={styles.permission}><Text style={styles.permissionIcon}>▥</Text><Text style={styles.permissionTitle}>Kameraya izin ver</Text><Text style={styles.permissionText}>Ürünün barkodunu okuyabilmek için kamera erişimi gerekiyor.</Text><AppButton label="Kamerayı Aç" onPress={requestPermission} /><AppButton label="Geri dön" tone="soft" onPress={onClose} /></View>;
+  return <View style={styles.page}><CameraView style={StyleSheet.absoluteFill} facing="back" barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'] }} onBarcodeScanned={scanned ? undefined : ({ data }) => { setScanned(true); onResult(data); }} />
+    <View style={styles.shade}><Pressable onPress={onClose} style={styles.close}><Text style={styles.closeText}>‹</Text></Pressable><View style={styles.top}><Text style={styles.title}>Barkodu hizalayın</Text><Text style={styles.copy}>Ürünün barkodunu çerçeve içine getirin.</Text></View><View style={styles.frame}><View style={[styles.corner, styles.tl]} /><View style={[styles.corner, styles.tr]} /><View style={[styles.corner, styles.bl]} /><View style={[styles.corner, styles.br]} /></View><Text style={styles.tip}>Barkod otomatik algılanır</Text></View></View>;
+}
+const styles = StyleSheet.create({ page:{flex:1,backgroundColor:'#17251D'}, shade:{flex:1,alignItems:'center',paddingTop:26,backgroundColor:'rgba(4,25,16,0.32)'}, close:{position:'absolute',left:20,top:20,width:42,height:42,borderRadius:21,backgroundColor:'#FFFFFFD9',alignItems:'center',justifyContent:'center'},closeText:{fontSize:36,lineHeight:35,color:colors.brand},top:{alignItems:'center',marginTop:36},title:{fontSize:24,fontWeight:'900',color:'#fff'},copy:{color:'#E2F3E9',marginTop:8},frame:{width:'78%',aspectRatio:1.35,marginTop:80,borderRadius:26,borderWidth:2,borderColor:'rgba(255,255,255,0.42)'},corner:{position:'absolute',width:40,height:40,borderColor:'#D8FF9D'},tl:{left:-3,top:-3,borderLeftWidth:6,borderTopWidth:6,borderTopLeftRadius:18},tr:{right:-3,top:-3,borderRightWidth:6,borderTopWidth:6,borderTopRightRadius:18},bl:{left:-3,bottom:-3,borderLeftWidth:6,borderBottomWidth:6,borderBottomLeftRadius:18},br:{right:-3,bottom:-3,borderRightWidth:6,borderBottomWidth:6,borderBottomRightRadius:18},tip:{color:'#fff',fontWeight:'800',marginTop:24},permission:{flex:1,backgroundColor:'#FFFDF7',padding:28,alignItems:'center',justifyContent:'center',gap:14},permissionIcon:{fontSize:60,color:colors.brand},permissionTitle:{fontSize:26,fontWeight:'900',color:colors.ink},permissionText:{color:colors.muted,textAlign:'center',lineHeight:22,marginBottom:12} });

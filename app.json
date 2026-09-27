@@ -25,7 +25,8 @@
       "themeColor": "#07583D"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      ["expo-camera", { "cameraPermission": "Foot & Health barkod taramak için kameranı kullanır." }]
     ]
   }
 }
