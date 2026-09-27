@@ -1,39 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { OnboardingScreen, ResultScreen, WelcomeScreen } from './src/screens/PlaceholderScreens';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { ScannerScreen } from './src/screens/ScannerScreen';
 import { colors, safeTop } from './src/theme';
-
-export default function App() {
-  const [screen, setScreen] = useState<'login' | 'onboarding' | 'home' | 'scanner' | 'result' | 'profile'>('login');
-  const [selected, setSelected] = useState<string[]>([]);
-  const [barcode, setBarcode] = useState('');
-  const showTabs = screen === 'home' || screen === 'profile';
-  return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        {screen === 'login' && <WelcomeScreen onContinue={() => setScreen('onboarding')} />}
-        {screen === 'onboarding' && <OnboardingScreen onComplete={(choices) => { setSelected(choices); setScreen('home'); }} />}
-        {screen === 'home' && <HomeScreen selected={selected} onProfile={() => setScreen('profile')} onScan={() => setScreen('scanner')} />}
-        {screen === 'profile' && <ProfileScreen selected={selected} onChange={setSelected} />}
-        {screen === 'scanner' && <ScannerScreen onClose={() => setScreen('home')} onResult={(code) => { setBarcode(code); setScreen('result'); }} />}
-        {screen === 'result' && <ResultScreen barcode={barcode} selected={selected} onProfile={() => setScreen('profile')} onClose={() => setScreen('home')} />}
-      </View>
-      {showTabs && <View style={styles.tabs}><Tab label="Ana Sayfa" icon="⌂" active={screen === 'home'} onPress={() => setScreen('home')}/><Tab label="Tara" icon="▥" onPress={() => setScreen('scanner')}/><Tab label="Profil" icon="◉" active={screen === 'profile'} onPress={() => setScreen('profile')}/></View>}
-      <StatusBar style="dark" />
-    </View>
-  );
-}
-function Tab({ label, icon, active, onPress }: { label: string; icon: string; active?: boolean; onPress?: () => void }) { return <Pressable accessibilityRole="tab" onPress={onPress} style={styles.tab}><Text style={[styles.tabIcon, active && styles.active]}>{icon}</Text><Text style={[styles.tabLabel, active && styles.active]}>{label}</Text></Pressable>; }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.canvas,
-    paddingTop: safeTop,
-  },
-  content: { flex: 1 }, tabs: { height: 78, backgroundColor: colors.surface, borderTopWidth: 1, borderColor: colors.line, flexDirection: 'row', justifyContent: 'space-around', paddingTop: 10 }, tab: { minWidth: 72, alignItems: 'center', gap: 3 }, tabIcon: { color: colors.muted, fontSize: 21 }, tabLabel: { color: colors.muted, fontSize: 11, fontWeight: '700' }, active: { color: colors.brand },
-});
+type Screen='login'|'onboarding'|'home'|'scanner'|'result'|'profile';
+export default function App(){const [screen,setScreen]=useState<Screen>('login');const [selected,setSelected]=useState<string[]>([]);const [barcode,setBarcode]=useState('');const [scans,setScans]=useState<string[]>([]);useEffect(()=>{fetch('/api/scans').then(r=>r.ok?r.json():null).then(data=>{if(data?.scans)setScans(data.scans.map((item:{barcode:string})=>item.barcode))}).catch(()=>undefined)},[]);const tabs=screen==='home'||screen==='profile';const header=screen!=='scanner';const scan=(code:string)=>{setBarcode(code);setScans(items=>[code,...items.filter(x=>x!==code)].slice(0,8));void fetch('/api/scans',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({barcode:code})});setScreen('result')};return <View style={s.container}>{header&&<View style={s.header}><Pressable onPress={()=>setScreen('home')} style={s.brand}><Text style={s.leaf}>✦</Text><Text style={s.brandText}>FOOT & HEALTH</Text></Pressable><Pressable onPress={()=>setScreen('profile')} style={s.profile}><Text style={s.profileText}>E</Text></Pressable></View>}<View style={s.content}>{screen==='login'&&<WelcomeScreen onContinue={()=>setScreen('onboarding')}/>} {screen==='onboarding'&&<OnboardingScreen onComplete={v=>{setSelected(v);setScreen('home')}}/>}{screen==='home'&&<HomeScreen selected={selected} scans={scans} onProfile={()=>setScreen('profile')} onScan={()=>setScreen('scanner')}/>} {screen==='profile'&&<ProfileScreen selected={selected} onChange={setSelected}/>} {screen==='scanner'&&<ScannerScreen onClose={()=>setScreen('home')} onResult={scan}/>} {screen==='result'&&<ResultScreen barcode={barcode} selected={selected} onProfile={()=>setScreen('profile')} onClose={()=>setScreen('home')}/>}</View>{tabs&&<View style={s.tabs}><Tab label="Ana Sayfa" icon="⌂" active={screen==='home'} onPress={()=>setScreen('home')}/><Tab label="Tara" icon="▥" onPress={()=>setScreen('scanner')}/><Tab label="Profil" icon="◉" active={screen==='profile'} onPress={()=>setScreen('profile')}/></View>}<StatusBar style="dark"/></View>}
+function Tab({label,icon,active,onPress}:{label:string;icon:string;active?:boolean;onPress:()=>void}){return <Pressable accessibilityRole="tab" onPress={onPress} style={s.tab}><Text style={[s.tabIcon,active&&s.active]}>{icon}</Text><Text style={[s.tabLabel,active&&s.active]}>{label}</Text></Pressable>}
+const s=StyleSheet.create({container:{flex:1,backgroundColor:'#FFFDF7',paddingTop:safeTop},header:{height:58,paddingHorizontal:18,flexDirection:'row',alignItems:'center',justifyContent:'space-between',backgroundColor:'#FFFDF7',borderBottomWidth:1,borderColor:'#E5EAE6'},brand:{flexDirection:'row',alignItems:'center',gap:7},leaf:{fontSize:21,color:colors.brand},brandText:{fontSize:13,fontWeight:'900',letterSpacing:.8,color:colors.brand},profile:{width:36,height:36,borderRadius:18,backgroundColor:'#DDF1CC',alignItems:'center',justifyContent:'center'},profileText:{color:colors.brand,fontWeight:'900'},content:{flex:1},tabs:{height:78,backgroundColor:colors.surface,borderTopWidth:1,borderColor:colors.line,flexDirection:'row',justifyContent:'space-around',paddingTop:10},tab:{minWidth:72,alignItems:'center',gap:3},tabIcon:{color:colors.muted,fontSize:21},tabLabel:{color:colors.muted,fontSize:11,fontWeight:'700'},active:{color:colors.brand}});

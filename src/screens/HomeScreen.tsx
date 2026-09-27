@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AppButton, Card, SectionTitle } from '../components/ui';
 import { colors, spacing } from '../theme';
 
-export function HomeScreen({ onScan, selected, onProfile }: { onScan: () => void; selected: string[]; onProfile: () => void }) {
+export function HomeScreen({ onScan, selected, scans, onProfile }: { onScan: () => void; selected: string[]; scans: string[]; onProfile: () => void }) {
   const summary = selected.length ? selected.slice(0, 2).join(' · ') : 'Ürün sonuçlarını sana göre kişiselleştir.';
   return <ScrollView contentContainerStyle={styles.page} showsVerticalScrollIndicator={false}>
     <View style={styles.header}><View><Text style={styles.eyebrow}>FOOT & HEALTH</Text><Text style={styles.greeting}>Bugün nasıl{"\n"}besleniyoruz?</Text></View><Pressable onPress={onProfile} style={styles.avatar}><Text style={styles.avatarText}>E</Text></Pressable></View>
@@ -11,7 +11,7 @@ export function HomeScreen({ onScan, selected, onProfile }: { onScan: () => void
     <SectionTitle>Sağlık özeti</SectionTitle>
     <Pressable onPress={onProfile}><Card style={styles.summary}><View style={styles.dot}/><View style={styles.summaryText}><Text style={styles.summaryTitle}>{selected.length ? String(selected.length) + ' sağlık tercihi aktif' : 'Sağlık tercihini ekle'}</Text><Text style={styles.summaryCopy}>{summary}</Text></View><Text style={styles.arrow}>›</Text></Card></Pressable>
     <SectionTitle>Son taramalar</SectionTitle>
-    <Card style={styles.empty}><Text style={styles.emptyIcon}>⌁</Text><Text style={styles.emptyTitle}>Henüz tarama yok</Text><Text style={styles.emptyCopy}>İlk ürününüzü tarayarak başlayın.</Text></Card>
+    <Card style={styles.empty}><Text style={styles.emptyIcon}>{scans.length ? '✓' : '⌁'}</Text><Text style={styles.emptyTitle}>{scans.length ? 'Son tarama otomatik kaydedildi' : 'Henüz tarama yok'}</Text><Text style={styles.emptyCopy}>{scans.length ? 'Barkod: ' + scans[0] : 'İlk ürününüzü tarayarak başlayın.'}</Text></Card>
     <Text style={styles.disclaimer}>Bu uygulama tıbbi tavsiye yerine geçmez.</Text>
   </ScrollView>;
 }
