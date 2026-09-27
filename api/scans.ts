@@ -23,7 +23,7 @@ export default async function handler(req: Request, res: Response) {
   try {
     await ensureSchema();
     if (req.method === 'GET') {
-      const result = await database().query('SELECT barcode, scanned_at FROM scan_history ORDER BY scanned_at DESC LIMIT 8');
+      const result = await database().query('SELECT barcode, scanned_at FROM scan_history ORDER BY scanned_at DESC LIMIT 100');
       res.status(200).json({ scans: result.rows });
       return;
     }
