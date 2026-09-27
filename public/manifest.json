@@ -1,0 +1,15 @@
+{
+  "short_name": "FootHealth",
+  "name": "Foot & Health",
+  "icons": [
+    {
+      "src": "/app-icon.png",
+      "type": "image/png",
+      "sizes": "1536x1536"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#07583D",
+  "background_color": "#FFFDF7"
+}

@@ -19,7 +19,10 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/branding/footandhealth-app-icon.png",
+      "name": "Foot & Health",
+      "shortName": "FootHealth",
+      "themeColor": "#07583D"
     },
     "plugins": [
       "expo-router"
