@@ -42,7 +42,7 @@ export default function App() {
     <View style={s.content}>
       {screen === 'login' && <AuthScreen onAuthenticated={loadAccount} />}
       {screen === 'onboarding' && <ProfileScreen selected={selected} onChange={setSelected} value={profile} onSave={saveProfile} onFinished={() => setScreen('home')} />}
-      {screen === 'home' && <HomeScreen selected={selected} scans={scans} onProfile={() => setScreen('profile')} onScan={() => setScreen('scanner')} />}
+      {screen === 'home' && <HomeScreen selected={selected} scans={scans} profile={profile} onProfile={() => setScreen('profile')} onScan={() => setScreen('scanner')} />}
       {screen === 'profile' && <ProfileScreen selected={selected} onChange={setSelected} value={profile} onSave={saveProfile} onClose={() => setScreen('home')} onLogout={() => void logout()} />}
       {screen === 'history' && <HistoryScreen scans={scans} onOpen={code => { setBarcode(code); setScreen('result'); }} />}
       {screen === 'scanner' && <ScannerScreen onClose={() => setScreen('home')} onResult={scan} />}
