@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "FOOTANDHEALTH",
-    "slug": "FOOTANDHEALTH",
+    "name": "Gıda Pusulası",
+    "slug": "gida-pusulasi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/branding/footandhealth-app-icon.png",
