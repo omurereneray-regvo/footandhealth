@@ -26,8 +26,10 @@ export function ensureSchema() {
       health_conditions JSONB NOT NULL DEFAULT '[]'::jsonb,
       age TEXT NOT NULL DEFAULT '', gender TEXT NOT NULL DEFAULT '', height TEXT NOT NULL DEFAULT '',
       weight TEXT NOT NULL DEFAULT '', activity TEXT NOT NULL DEFAULT '', goal TEXT NOT NULL DEFAULT '',
-      target_weight TEXT NOT NULL DEFAULT '', avatar_url TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      target_weight TEXT NOT NULL DEFAULT '', dietary_preference TEXT NOT NULL DEFAULT '', dislikes TEXT NOT NULL DEFAULT '', avatar_url TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+    ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS dietary_preference TEXT NOT NULL DEFAULT '';
+    ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS dislikes TEXT NOT NULL DEFAULT '';
     ALTER TABLE scan_history ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES app_users(id) ON DELETE CASCADE;
     CREATE INDEX IF NOT EXISTS scan_history_user_scanned_at_idx ON scan_history (user_id, scanned_at DESC);
   `).then(() => undefined);
